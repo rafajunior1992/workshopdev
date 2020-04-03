@@ -13,11 +13,13 @@
 
   <div id="container">
     <header>
-      <img src="logo.png" alt="Imagem da logomarca">
+      <a href="index.html">
+        <img src="logo.png" alt="Imagem da logomarca">
+      </a>
+
       <nav>
         <li><a href="index.html">início</a></li>
-        <li><a href="#">Ideias</a></li>
-        <li><a href="#">Nova Ideia</a></li>
+        <li><a class="button" href="#" onclick=onOff()>Nova Ideia</a></li>
       </nav>
     </header>
   
@@ -27,7 +29,7 @@
     </section>
   
     <main>
-      <section id="ideais">
+      <section id="ideas">
         <div class="idea">
           <img 
             src="https://image.flaticon.com/icons/svg/2729/2729007.svg" 
@@ -73,11 +75,26 @@
               <a href="#">Ir para a ideia</a>
             </div>
         </div>
+
+        <div class="idea">
+          <img 
+            src="https://image.flaticon.com/icons/svg/2729/2729032.svg" 
+            alt="Imagem de karaokê">
+  
+            <div class="content">
+              <h3>Karaokê</h3>
+              <p>Diversão em Família</p>
+              <div class="description">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut porro nostrum animi voluptates non repudiandae iusto quod incidunt maxime asperiores? Soluta tempore quos dignissimos dolore eum perferendis nobis atque nam.
+              </div>
+              <a href="#">Ir para a ideia</a>
+            </div>
+        </div>
       </section>
     </main>  
   
     <footer id="footer">
-      Com ❤ <a href="http://rocketseat.com.br">Rocketseat</a>
+      Com ❤ <a href="http://rocketseat.com.br" target="_blank">Rocketseat</a>
     </footer>
   </div>
 
