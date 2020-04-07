@@ -2,40 +2,14 @@ const express = require("express");
 
 const server = express();
 
-const ideas = [
-  {
-    img: "https://image.flaticon.com/icons/svg/2729/2729007.svg",
-    title: "Curso de Programação",
-    category: "Estudo",
-    description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut porro nostrum animi",
-    url: "https://rocketseat.com.br"
-  },
-  {
-    img: "https://image.flaticon.com/icons/svg/2729/2729027.svg",
-    title: "Meditação",
-    category: "Mentalidade",
-    description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut porro nostrum animi",
-    url: "https://rocketseat.com.br"
-  },
-  {
-    img: "https://image.flaticon.com/icons/svg/2729/2729005.svg",
-    title: "Exercícios",
-    category: "Saúde",
-    description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut porro nostrum animi",
-    url: "https://rocketseat.com.br"
-  },
-  {
-    img: "https://image.flaticon.com/icons/svg/2729/2729032.svg",
-    title: "Karaokê",
-    category: "Diversão em Família",
-    description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut porro nostrum animi",
-    url: "https://rocketseat.com.br"
-  },
-];
+const db = require("./db");
 
 
 //configurar os arquivos estáticos (css, scripts, imagens)
 server.use(express.static("public"));
+
+//habilitar request body
+server.use(express.urlencoded({ extended: true }));
 
 //configuração do nunjucks
 const nunjucks = require("nunjucks");
@@ -47,21 +21,66 @@ nunjucks.configure("views", {
 //criei uma rota
 // e capturo o pedido do cliente para responder
 server.get("/", function(request, response) {
-  const reverseIdeas = [...ideas].reverse();
 
-  let lastIdeas = [];
-  for (let idea of reverseIdeas) {
-    if (lastIdeas.length < 2){
-      lastIdeas.push(idea);
+  db.all(`SELECT * FROM ideas`, function(err, rows) {
+    if (err) return console.log(err);
+
+    const reverseIdeas = [...rows].reverse();
+
+    let lastIdeas = [];
+    for (let idea of reverseIdeas) {
+      if (lastIdeas.length < 2){
+        lastIdeas.push(idea);
+      }
     }
-  }
-  return response.render("index.html", { ideas: lastIdeas });
+    return response.render("index.html", { ideas: lastIdeas });
+  })
+
 });
 
 server.get("/ideias", function(request, response) {
-  const reverseIdeas = [...ideas].reverse();
+  db.all(`SELECT * FROM ideas`, function(err, rows) {
+    if (err) {
+      console.log(err);
+      return response.send("Erro no banco de dados!!");
+    }
+    
+    const reverseIdeas = [...rows].reverse();
+  
+    return response.render("ideias.html", { ideas: reverseIdeas });
+  })
 
-  return response.render("ideias.html", { ideas: reverseIdeas });
+});
+
+server.post("/", function(request, response) {
+  //Inserir dados
+  const query = `
+    INSERT INTO ideas(
+      image,
+      title,
+      category,
+      description,
+      link
+    ) VALUES (?,?,?,?,?);
+  `;
+
+  const values = [
+    request.body.image,
+    request.body.title,
+    request.body.category,
+    request.body.description,
+    request.body.link
+  ];
+
+  db.run(query, values, function(err) {
+    if (err) {
+      console.log(err);
+      return response.send("Erro no banco de dados!!");
+    }
+
+    return response.redirect("/ideias");
+    
+  });
 });
 
 
